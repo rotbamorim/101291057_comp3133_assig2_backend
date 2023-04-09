@@ -3,7 +3,7 @@ import * as bcrypt from 'bcrypt'
 import { CreateUserInput } from './dto/input/create-user-input.dto';
 import { GetUserArgs } from './dto/args/get-user-args.dto';
 import { UsersRepository } from './users.repository';
-import { UserDocument } from './models/user.Schema';
+import { UserDocument } from './models/user.schema';
 import { User } from './models/user.model';
 
 @Injectable()
@@ -25,6 +25,7 @@ export class UsersService {
     private async validateCreateUserData(createUserData:CreateUserInput){
         try{
             await this.usersRepository.findOne({username:createUserData.username});
+            throw new UnprocessableEntityException('Username in use')
                 }catch (error){
 
         }
@@ -38,7 +39,7 @@ export class UsersService {
     }
 
     async validateUser(username:string, password: string){
-        const userDocument = await this.usersRepository.findOne({username});
+        const userDocument = await this.usersRepository.findOne({ username });
         const passwordIsValid = await bcrypt.compare(password, userDocument.password)
         if(!passwordIsValid){throw new UnauthorizedException('Password Incorrect') }
 
